@@ -1,5 +1,5 @@
-- name: Include initialization tasks
-  include_tasks: k8s_init.yml
+#- name: Include initialization tasks
+# include_tasks: k8s_init.yml
 
 - name: Deploy Calico network
   include_tasks: k8s_calico.yml
