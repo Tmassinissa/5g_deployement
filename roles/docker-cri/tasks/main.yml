@@ -70,7 +70,7 @@
 
 - name: Enable and start the cri-docker service.
   systemd:
-    name: cri-docker.socket
+    name: cri-docker.service
     enabled: yes
     state: started
   become: yes
