@@ -1,13 +1,13 @@
 - name: Copy the 'cri-dockerd' archive.
   copy:
     src: cri-dockerd.tar.gz
-    dest: /install/ 
-  
+    dest: /install/
+
 - name: Extract the cri-dockerd archive.
   unarchive:
     src: /install/cri-dockerd.tar.gz
     dest: /install/
-    creates: /install/cri-dockerd 
+    creates: /install/cri-dockerd
     remote_src: yes
 
 - name: Install the 'make' package.
@@ -29,32 +29,47 @@
     creates: /usr/local/go
   become: yes
 
+- name: Mark cri-dockerd directory as safe for Git
+  shell: git config --global --add safe.directory /install/cri-dockerd
+  args:
+    executable: /bin/bash
+  become: yes
+
 - name: Execute the command 'make cri-dockerd'.
   command: make cri-dockerd
   args:
     chdir: /install/cri-dockerd
-  become: yes
   environment:
     PATH: "{{ ansible_env.PATH }}:/usr/local/go/bin"
+  become: yes
 
 - name: Copy the 'cri-dockerd' file to /usr/local/bin.
   copy:
-    src: /install/cri-dockerd/
-    dest: /usr/local/bin/
+    src: /install/cri-dockerd/cri-dockerd
+    dest: /usr/local/bin/cri-dockerd
     remote_src: true
+  become: yes
 
-  
+
+- name: Ensure 'cri-dockerd' is executable.
+  file:
+    path: /usr/local/bin/cri-dockerd
+    mode: '0755'
+  become: yes
+
 - name: Copy the systemd files to /etc/systemd/system.
-  copy: 
-    src: /install/cri-dockerd/packaging/systemd/ 
+  copy:
+    src: /install/cri-dockerd/packaging/systemd/
     dest: /etc/systemd/system/
     remote_src: true
+  become: yes
 
 - name: Replace the path in the cri-docker.service file.
   replace:
     path: /etc/systemd/system/cri-docker.service
     regexp: '/usr/bin/cri-dockerd'
     replace: '/usr/local/bin/cri-dockerd'
+  become: yes
 
 - name: Reload the systemd daemon.
   systemd:
@@ -68,15 +83,16 @@
     state: started
   become: yes
 
-- name: Enable and start the cri-docker service.
+- name: Start cri-docker service.
   systemd:
     name: cri-docker.service
-    enabled: yes
     state: started
+    enabled: yes
   become: yes
 
+
 - name: Ensure cri-dockerd is restarted and running
-  systemd:
+  ansible.builtin.systemd:
     name: cri-docker.service
     state: restarted
     enabled: yes
@@ -84,10 +100,9 @@
   become: yes
 
 - name: Wait for cri-dockerd to be ready
-  wait_for:
+  ansible.builtin.wait_for:
     path: /var/run/cri-dockerd.sock
     state: present
-    timeout: 30
-
+    timeout: 30  # Adjust the timeout as necessary
 
 

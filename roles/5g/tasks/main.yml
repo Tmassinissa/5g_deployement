@@ -1,0 +1,10 @@
+
+- name: Include initialization tasks
+  include_tasks: init.yml
+
+- name: Include 5g core deployment
+  include_tasks: 5g_core.yml
+
+- name: Include 5g gnb deployment
+  include_tasks: 5g_gnb.yml
+ 

@@ -1,0 +1,7 @@
+---
+- name: Install helm
+  hosts: masters
+  roles:
+    - role: 5g
+
+

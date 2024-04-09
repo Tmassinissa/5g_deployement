@@ -1,0 +1,46 @@
+---
+- name: Download Helm signing key
+  get_url:
+    url: "https://baltocdn.com/helm/signing.asc"
+    dest: "/etc/apt/keyrings/helm.asc"
+
+- name: Grant read permissions to helm.asc file
+  file:
+    path: /etc/apt/keyrings/helm.asc
+    mode: 'a+r'
+  become: yes
+
+- name: Install apt-transport-https package
+  apt:
+    name: apt-transport-https
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Add Helm repository to Apt sources
+  ansible.builtin.shell: 
+    cmd: echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/helm.asc] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee -a /etc/apt/sources.list.d/helm-stable-debian.list
+  become: yes
+
+- name: Update apt package cache
+  apt:
+    update_cache: yes
+
+- name: Install Helm
+  apt:
+    name: helm
+    state: present
+
+- name: Copy a 5g-core from the controller to a remote node
+  copy:
+    src: oai-5g-core  # Local path of the file on the controller
+    dest: /5g/  # Destination path on the remote node
+    remote_src: false  # Indicates that the source is on the controller (not on the remote node)
+  become: yes  # Use administrative privileges to write to the remote node if necessary
+
+- name: Copy a 5g-ran from the controller to a remote node
+  copy:  
+    src: oai-gnb   # Local path of the file on the controller
+    dest: /5g/  # Destination path on the remote node
+    remote_src: false  # Indicates that the source is on the controller (not on the remote node)
+  become: yes  # Use administrative privileges to write to the remote node if necessary
