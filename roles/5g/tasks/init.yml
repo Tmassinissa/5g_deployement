@@ -1,5 +1,6 @@
 ---
 - name: Download Helm signing key
+  become: yes
   get_url:
     url: "https://baltocdn.com/helm/signing.asc"
     dest: "/etc/apt/keyrings/helm.asc"
@@ -23,10 +24,12 @@
   become: yes
 
 - name: Update apt package cache
+  become: yes
   apt:
     update_cache: yes
 
 - name: Install Helm
+  become: yes
   apt:
     name: helm
     state: present

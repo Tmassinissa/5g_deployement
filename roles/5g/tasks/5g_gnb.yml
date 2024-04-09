@@ -4,7 +4,7 @@
   args:
     chdir: /5g/oai-gnb/  # Chemin vers le répertoire contenant votre chart Helm
 
-- name: Install Helm chart
+- name: Install oai-gnb Helm chart
   command: helm install oai-gnb .
   args:
     chdir: /5g/oai-gnb  # Chemin vers le répertoire contenant votre chart Helm
