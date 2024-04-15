@@ -1,5 +1,5 @@
 ---
-- name: Install helm
+- name: Deploy 5g
   hosts: masters
   roles:
     - role: 5g

@@ -1,8 +1,15 @@
+- name: Extract files from zipoai-5g-core.tar.gz
+  become: yes
+  ansible.builtin.unarchive:
+    src: oai-5g-core.tar.gz
+    dest: /5g/oai-5g-core/oai-5g-basic
+    remote_src: yes
+
 - name: Update Helm dependencies
   become: yes
   command: helm dependency update
   args:
-    chdir: /5g/oai-5g-core/oai-5g-basic  # Chemin vers le répertoire contenant votre chart Helm
+    chdir: /5g/oai-5g-core/oai-5g-basic
 
 - name: Install Helm chart
   command: helm install oai-core /5g/oai-5g-core/oai-5g-basic
