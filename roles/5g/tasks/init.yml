@@ -32,18 +32,3 @@
   become: yes
   apt:
     name: helm
-    state: present
-
-- name: Copy a 5g-core from the controller to a remote node
-  copy:
-    src: oai-5g-core  # Local path of the file on the controller
-    dest: /5g/  # Destination path on the remote node
-    remote_src: false  # Indicates that the source is on the controller (not on the remote node)
-  become: yes  # Use administrative privileges to write to the remote node if necessary
-
-- name: Copy a 5g-ran from the controller to a remote node
-  copy:  
-    src: oai-gnb   # Local path of the file on the controller
-    dest: /5g/  # Destination path on the remote node
-    remote_src: false  # Indicates that the source is on the controller (not on the remote node)
-  become: yes  # Use administrative privileges to write to the remote node if necessary

@@ -1,11 +1,6 @@
-- name: Update Helm dependencies
-  become: yes
-  command: helm dependency update
-  args:
-    chdir: /5g/oai-gnb/  # Chemin vers le répertoire contenant votre chart Helm
 
 - name: Install oai-gnb Helm chart
   command: helm install oai-gnb .
   args:
-    chdir: /5g/oai-gnb  # Chemin vers le répertoire contenant votre chart Helm
+    chdir: /5g/oai-gnb  
 
