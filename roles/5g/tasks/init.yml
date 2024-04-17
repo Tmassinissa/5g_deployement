@@ -1,34 +1,51 @@
----
-- name: Download Helm signing key
-  become: yes
-  get_url:
-    url: "https://baltocdn.com/helm/signing.asc"
-    dest: "/etc/apt/keyrings/helm.asc"
 
-- name: Grant read permissions to helm.asc file
-  file:
-    path: /etc/apt/keyrings/helm.asc
-    mode: 'a+r'
-  become: yes
+- name: Check if Helm is installed
+  command: which helm
+  register: helm_check
+  failed_when: false
+  changed_when: false
 
-- name: Install apt-transport-https package
+- name: Install dependencies
   apt:
-    name: apt-transport-https
+    name: 
+      - curl
     state: present
-    update_cache: yes
-  become: yes
+  when: helm_check.rc != 0
 
-- name: Add Helm repository to Apt sources
-  ansible.builtin.shell: 
-    cmd: echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/helm.asc] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee -a /etc/apt/sources.list.d/helm-stable-debian.list
-  become: yes
+- name: Download Helm
+  get_url:
+    url: "https://get.helm.sh/helm-v3.7.0-linux-amd64.tar.gz"
+    dest: "/tmp/helm-v3.7.0-linux-amd64.tar.gz"
+    mode: '0644'
+  when: helm_check.rc != 0
 
-- name: Update apt package cache
-  become: yes
-  apt:
-    update_cache: yes
+- name: Extract Helm tar.gz
+  ansible.builtin.unarchive:
+    src: "/tmp/helm-v3.7.0-linux-amd64.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+  when: helm_check.rc != 0
 
-- name: Install Helm
+- name: Move Helm to /usr/local/bin
   become: yes
-  apt:
-    name: helm
+  command: mv /tmp/linux-amd64/helm /usr/local/bin/helm
+  args:
+    creates: "/usr/local/bin/helm"
+  when: helm_check.rc != 0
+
+- name: Verify Helm installation (for new installations)
+  command: helm version
+  register: helm_version_output
+  when: helm_check.rc != 0
+
+- name: Show Helm version (for new installations)
+  debug:
+    msg: "{{ helm_version_output.stdout }}"
+  when: helm_check.rc != 0
+
+- name: Install Helm spray plugin
+  kubernetes.core.helm_plugin:
+    plugin_path: https://github.com/ThalesGroup/helm-spray
+    plugin_version: v4.0.10
+    state: present
+

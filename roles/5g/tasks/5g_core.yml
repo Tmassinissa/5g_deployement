@@ -1,12 +1,23 @@
-- name: Extract files from zipoai-5g-core.tar.gz
+- name: Ensure destination directory exists
+  ansible.builtin.file:
+    path: /5g
+    state: directory
   become: yes
-  ansible.builtin.unarchive:
+
+- name: Copy oai-5g-core.tar.gz to the target host
+  ansible.builtin.copy:
     src: oai-5g-core.tar.gz
-    dest: /5g/oai-5g-core/oai-5g-basic
-    remote_src: yes
+    dest: /5g/oai-5g-core.tar.gz
+  become: yes
+
+- name: Extract files from oai-5g-core.tar.gz
+  ansible.builtin.unarchive:
+    src: /5g/oai-5g-core.tar.gz
+    dest: /5g/oai-5g-core
+    remote_src: true
+  become: yes
 
 - name: Update Helm dependencies
-  become: yes
   command: helm dependency update
   args:
     chdir: /5g/oai-5g-core/oai-5g-basic
