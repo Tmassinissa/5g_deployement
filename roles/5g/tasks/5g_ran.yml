@@ -2,24 +2,24 @@
   become: yes
   ansible.builtin.unarchive:
     src: oai-nr-ue.tar.gz
-    dest: /5g/oai-nr-ue
-    remote_src: yes
+    dest: /5g
+    remote_src: false
 
 - name: Extract oai-gnb.tar.gz file
   become: yes
   ansible.builtin.unarchive:
     src: oai-gnb.tar.gz
-    dest: /5g/oai-gnb
-    remote_src: yes
+    dest: /5g
+    remote_src: false
 
 - name: Install oai-gnb Helm chart
   command: helm install oai-gnb .
   args:
     chdir: /5g/oai-gnb
 
-- name: Install oai-nr-ue Helm chart
-  command: helm install oai-nr-ue .
-  args:
-    chdir: /5g/oai-nr-ue
+      #- name: Install oai-nr-ue Helm chart
+      #command: helm install oai-nr-ue .
+      #args:
+      #chdir: /5g/oai-nr-ue
 
 

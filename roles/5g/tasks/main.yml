@@ -4,23 +4,6 @@
 - name: Include 5g core deployment
   include_tasks: 5g_core.yml
 
-- name: Fetch status of core pods
-  kubernetes.core.k8s_info:
-    kind: Pod
-    kubeconfig: /etc/kubernetes/admin.conf
-    label_selectors:
-      - "app.kubernetes.io/instance=oai-core"  
-  register: pod_info
-
-- name: Verify all the core pods and their containers are ready
-  ansible.builtin.command:
-    cmd: "kubectl get pods --kubeconfig /etc/kubernetes/admin.conf -l app.kubernetes.io/instance=oai-core -o jsonpath='{.items[*].status.conditions[?(@.type==\"Ready\")].status}'"
-  register: pod_ready_status
-  until: pod_ready_status.stdout.split() | select("equalto", "True") | list | length == pod_info.resources | length
-  retries: 30
-  delay: 10
-  when: GCN.core.present is defined and GCN.core.present
-
 - name: Include 5g RAN deployment
-  include_tasks: 5g_gnb.yml
+  include_tasks: 5g_ran.yml
 

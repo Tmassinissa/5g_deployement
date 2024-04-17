@@ -1,6 +1,0 @@
-
-- name: Install oai-gnb Helm chart
-  command: helm install oai-gnb .
-  args:
-    chdir: /5g/oai-gnb  
-
