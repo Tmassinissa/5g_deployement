@@ -1,0 +1,1 @@
+kubeadm join 100.100.100.100:6443 --token wap5rn.hfxdaiu31lxjga93 --discovery-token-ca-cert-hash sha256:1e34216ed7b53802deb704f62630d071ef0e0d432195684d6f92084a68aa0ebe  --cri-socket=unix:///var/run/cri-dockerd.sock
