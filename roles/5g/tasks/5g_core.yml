@@ -28,18 +28,16 @@
 - name: Fetch status of core pods
   kubernetes.core.k8s_info:
     kind: Pod
-    kubeconfig: /etc/kubernetes/admin.conf
+    kubeconfig: .kube/config
     label_selectors:
       - "app.kubernetes.io/instance=oai-core"  # Adjust this to match your pods' labeling
   register: pod_info
-  become: yes
 
 - name: Verify all the core pods and their containers are ready
   ansible.builtin.command:
-    cmd: "kubectl get pods --kubeconfig /etc/kubernetes/admin.conf -l app.kubernetes.io/instance=oai-core -o jsonpath='{.items[*].status.conditions[?(@.type==\"Ready\")].status}'"
+    cmd: "kubectl get pods --kubeconfig .kube/config -l app.kubernetes.io/instance=oai-core -o jsonpath='{.items[*].status.conditions[?(@.type==\"Ready\")].status}'"
   register: pod_ready_status
   until: pod_ready_status.stdout.split() | select("equalto", "True") | list | length == pod_info.resources | length
   retries: 30
   delay: 10
-  become: yes
 

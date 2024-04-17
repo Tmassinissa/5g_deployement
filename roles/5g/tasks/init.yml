@@ -55,9 +55,4 @@
     msg: "{{ helm_version_output.stdout }}"
   when: helm_check.rc != 0
 
-- name: Install Helm spray plugin
-  kubernetes.core.helm_plugin:
-    plugin_path: https://github.com/ThalesGroup/helm-spray
-    plugin_version: v4.0.10
-    state: present
 
