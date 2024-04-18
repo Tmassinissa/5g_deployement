@@ -32,7 +32,7 @@
   register: pod_info
 
 - name: Attendre que tous les pods soient en cours d'exécution
-  ansible.builtin.shell: >
+  shell: >
     kubectl get pods --kubeconfig .kube/config --field-selector=status.phase!=Running -o jsonpath='{.items[*].metadata.name}'
   register: not_running_pods
   until: not_running_pods.stdout_lines | length == 0

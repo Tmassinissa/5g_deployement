@@ -1,10 +1,4 @@
 
-- name: Check if Helm is installed
-  command: which helm
-  register: helm_check
-  failed_when: false
-  changed_when: false
-
 - name: Ensure pip3 is installed
   ansible.builtin.apt:
     name: python3-pip
@@ -16,6 +10,12 @@
   ansible.builtin.pip:
     name: kubernetes
     state: present
+
+- name: Check if Helm is installed
+  command: which helm
+  register: helm_check
+  failed_when: false
+  changed_when: false
 
 - name: Install dependencies
   apt:
@@ -50,9 +50,5 @@
   register: helm_version_output
   when: helm_check.rc != 0
 
-- name: Show Helm version (for new installations)
-  debug:
-    msg: "{{ helm_version_output.stdout }}"
-  when: helm_check.rc != 0
 
 

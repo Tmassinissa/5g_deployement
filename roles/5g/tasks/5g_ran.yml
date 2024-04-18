@@ -30,9 +30,9 @@
   args:
     chdir: /5g/oai-gnb
 
-      #- name: Install oai-nr-ue Helm chart
-      #command: helm install oai-nr-ue .
-      #args:
-      #chdir: /5g/oai-nr-ue
+- name: Install oai-nr-ue Helm chart
+  command: helm install oai-nr-ue .
+  args:
+     chdir: /5g/oai-nr-ue
 
 
