@@ -1,3 +1,16 @@
+
+- name: Copy oai-nr-ue.tar.gz to the target host
+  ansible.builtin.copy:
+    src: oai-nr-ue.tar.gz
+    dest: /5g/oai-nr-ue.tar.gz
+  become: yes
+
+- name: Copy oai-gnb.tar.gz to the target host
+  ansible.builtin.copy:
+    src: oai-gnb.tar.gz
+    dest: /5g/oai-gnb.tar.gz
+  become: yes
+
 - name: Extract oai-nr-ue.tar.gz and oai-gnb.tar.gz files
   become: yes
   ansible.builtin.unarchive:

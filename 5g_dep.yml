@@ -2,6 +2,6 @@
 - name: Deploy 5g
   hosts: masters
   roles:
-    - role: 5g
+  - role: 5g
 
 

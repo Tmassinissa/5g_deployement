@@ -25,19 +25,18 @@
 - name: Install Helm chart
   command: helm install oai-core /5g/oai-5g-core/oai-5g-basic
 
-- name: Fetch status of core pods
+- name: Fetch status of all pods
   kubernetes.core.k8s_info:
     kind: Pod
     kubeconfig: .kube/config
-    label_selectors:
-      - "app.kubernetes.io/instance=oai-core"  # Adjust this to match your pods' labeling
   register: pod_info
 
-- name: Verify all the core pods and their containers are ready
-  ansible.builtin.command:
-    cmd: "kubectl get pods --kubeconfig .kube/config -l app.kubernetes.io/instance=oai-core -o jsonpath='{.items[*].status.conditions[?(@.type==\"Ready\")].status}'"
-  register: pod_ready_status
-  until: pod_ready_status.stdout.split() | select("equalto", "True") | list | length == pod_info.resources | length
+- name: Attendre que tous les pods soient en cours d'exécution
+  ansible.builtin.shell: >
+    kubectl get pods --kubeconfig .kube/config --field-selector=status.phase!=Running -o jsonpath='{.items[*].metadata.name}'
+  register: not_running_pods
+  until: not_running_pods.stdout_lines | length == 0
   retries: 30
   delay: 10
-
+  changed_when: false
+    
